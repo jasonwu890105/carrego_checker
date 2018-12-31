@@ -1,0 +1,21 @@
+{% extends "base.htm" %}
+{% block content %}
+
+
+<h2>Edit Rego Detail</h2>
+
+
+{% from "_formhelpers.htm" import render_field %}
+<form method=post>
+    <dl>
+        {{ render_field(form.regonum) }}
+        {{ render_field(form.driver) }}
+        {{ render_field(form.state) }}
+        {{ render_field(form.manager) }}
+        {{ render_field(form.expirydate) }}
+        {{ render_field(form.email) }}
+    </dl>
+    <p><input type=submit value=Submit>
+</form>
+
+{% endblock %}
