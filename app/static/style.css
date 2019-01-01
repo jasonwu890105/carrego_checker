@@ -1,0 +1,15 @@
+.submit_button {
+    background-color: #bdccb4; color: black; /* Green */
+    box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2), 0 6px 20px 0 rgba(0,0,0,0.19);
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+  }
+  
+  div.output{
+    position: absolute;
+    top: 200px;
+    left: 30px;
+    border: 3px solid #73AD21;
+  }

@@ -1,11 +1,15 @@
 from app import app, db
-from flask import render_template, request, redirect, flash, jsonify, session, url_for
+from flask import render_template, request, redirect, flash, jsonify, session, url_for, send_file
 from app.forms import CarSearchForm, CarsForm, DownloadForm, CarsForm_Update
 from app.models import Cars
 from app.table import Results
 import csv
 import flask_excel as excel
 import pandas as pd 
+import json, datetime
+from pandas.io.json import json_normalize
+from io import TextIOWrapper 
+from sqlalchemy import create_engine
 
 @app.route('/', methods=['GET', 'POST'])
 #@app.route('/index', methods=['GET', 'POST'])
@@ -206,23 +210,40 @@ def downloadsearch():
     column_name = ['id', 'regonum', 'driver', 'state', 'manager', 'expirydate']
     return excel.make_response_from_query_sets(query_sets_all, column_name, 'csv')
 
+
 @app.route('/upload', methods=['GET', 'POST'])
 def file_upload():
+    global filename
     if request.method == 'POST':
-        print(request.files['file'])
-        f = request.files['file']
-        data_xls = pd.read_csv(f)
-        session ['f_html'] = data_xls.to_html()
-        #return (data_xls.to_html())
-        return redirect(url_for('saveto_db'))
-        
 
-    return render_template('upload.htm')
+        if 'file' not in request.files:
+            flash('No selected file')
+            return redirect(request.url)
 
-@app.route('/upload/todb', methods=['GET', 'POST'])
-def saveto_db():
+        file = request.files['file']
 
-    if request.method == 'POST' and 'f_html' in session:
+        if file.filename == '':
+            flash('No selected file')
+            return render_template('upload.htm')
 
-        f2 = session['f_html']
-        return render_template('upload_results.htm', data=f2)
+        try:
+            df = pd.read_csv(file)
+            filename = datetime.datetime.now().strftime("/home/jason/Desktop/carrego/app/uploads/%Y-%m-%d-%H-%M-%S-%f"+".csv")
+            df.to_csv(filename, index=None)
+            flash('File Uploaded Successfully')
+            return render_template('upload.htm', data=df.to_html(), btn='validatecsv.htm')
+
+        except Exception as e:
+            return render_template("upload.htm", text=str(e))
+    
+    return render_template('upload.htm', methods=['GET', 'POST'])
+
+@app.route("/download_file/")
+def download_csv():
+    return send_file(filename, attachment_filename='yourfile.csv', as_attachment=True)
+
+@app.route('/Save_to_DB', methods=['GET', 'POST'])
+def save_to_db():
+    engine = create_engine('postgresql://postgres:wd123WD123@localhost/carrego')
+    df_uploaded = pd.read_csv(filename, index_col=False)
+    return df_uploaded.to_sql(name='cars', con=engine, if_exists='append', index=False)
