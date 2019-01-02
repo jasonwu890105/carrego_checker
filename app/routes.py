@@ -242,8 +242,35 @@ def file_upload():
 def download_csv():
     return send_file(filename, attachment_filename='yourfile.csv', as_attachment=True)
 
+'''
 @app.route('/Save_to_DB', methods=['GET', 'POST'])
 def save_to_db():
     engine = create_engine('postgresql://postgres:wd123WD123@localhost/carrego')
     df_uploaded = pd.read_csv(filename, index_col=False)
+    df2 = pd.read_sql_table(table_name='cars', con=engine)
+    print(df2)
     return df_uploaded.to_sql(name='cars', con=engine, if_exists='append', index=False)
+'''
+
+
+@app.route('/Save_to_DB', methods=['GET', 'POST'])
+def save_to_db():
+    engine = create_engine('postgresql://postgres:wd123WD123@localhost/carrego')
+    df2 = pd.read_sql_table(table_name='cars', con=engine)
+    df_uploaded = pd.read_csv(filename, index_col=False)
+
+    completed = []
+
+    for row in df_uploaded['regonum']:
+
+        if row in df2['regonum'].tolist():
+            completed.append('in')
+            #print (row['regonum'])
+            #df_uploaded.loc[row['regonum'], 'foo'] = 'in'
+        #a = row['regonum']
+
+        else:
+            completed.append('out')
+    df_uploaded['completed'] = completed
+        #df_uploaded = #print (a)
+    return df_uploaded.to_html()
