@@ -1,0 +1,13 @@
+{% extends "base.htm" %}
+{% block content %}
+
+
+<h2>Edit Rego Detail</h2>
+
+
+{% from "_formhelpers.htm" import render_field %}
+<form action="{{url_for('renew')}}" method=post>
+    <p><input type=submit value=Submit>
+</form>
+
+{% endblock %}

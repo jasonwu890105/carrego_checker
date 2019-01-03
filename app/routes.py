@@ -10,6 +10,7 @@ import json, datetime
 from pandas.io.json import json_normalize
 from io import TextIOWrapper 
 from sqlalchemy import create_engine
+import datetime, datedelta
 
 @app.route('/', methods=['GET', 'POST'])
 #@app.route('/index', methods=['GET', 'POST'])
@@ -164,6 +165,26 @@ def delete(id):
 
     else:
         return 'Error deleting #{id}'.format(id=id)
+    
+@app.route('/renew/<int:id>', methods=['GET', 'POST'])
+def renew(id):
+    qry = Cars.query.filter(Cars.id==id)
+    car = qry.first()
+
+    #if car:
+    #    form = CarsForm_Update(formdata=request.form, obj=car)
+    if request.method == 'POST':
+        car.expirydate = car.expirydate + datedelta.YEAR
+        db.session.commit()
+
+        car_rego = car.regonum
+        flash(f'{car_rego} Renew for One More Year!')
+        return redirect('/')
+        
+        #return render_template('renew_car.htm', form=form)
+
+    else:
+        return 'Error deleting #{id}'.format(id=id)
  
 
 @app.route('/download', methods=['GET', 'POST'])
@@ -264,13 +285,10 @@ def save_to_db():
     for row in df_uploaded['regonum']:
 
         if row in df2['regonum'].tolist():
-            completed.append('in')
-            #print (row['regonum'])
-            #df_uploaded.loc[row['regonum'], 'foo'] = 'in'
-        #a = row['regonum']
-
+            completed.append('Duplicated')
+            
         else:
             completed.append('out')
     df_uploaded['completed'] = completed
-        #df_uploaded = #print (a)
-    return df_uploaded.to_html()
+
+    return render_template('upload_results.htm', pd_table=df_uploaded.to_html())

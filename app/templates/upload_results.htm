@@ -1,17 +1,28 @@
-<html>
-<head>
-	<title>DataFrame Data</title>
-</head>
-<body>
-<h1>Original DataFrame</h1> 
+{% extends "base.htm" %}
+{% block content %}
+
+
+{% from "_formhelpers.htm" import render_field %}
+<title>Upload an excel file</title>
+
+{% with messages = get_flashed_messages() %}
+  {% if messages %}
+    <ul class=flashes>
+    {% for message in messages %}
+      <li>{{ message }}</li>
+    {% endfor %}
+    </ul>
+  {% endif %}
+{% endwith %}
  
-<h1>Statistical Result</h1> 
- 
- <p> </p>
- 
+<h1>Please check uploaded results : </h1>
+<br>
+<br>
+
  <div>
-	{{data | safe}}
+	{{pd_table | safe}}
 	{% include btn ignore missing %} 
  </div>
-</body>
-</html>
+
+{% endblock %}
+
