@@ -218,7 +218,7 @@ def download_results(category):
 
     if category_string:
         query_sets = Cars.query.filter(Cars.manager==category_string).all()
-        column_name = ['id', 'regonum', 'driver', 'state', 'manager', 'expirydate']
+        column_name = ['regonum', 'driver', 'state', 'manager', 'expirydate', 'email']
         return excel.make_response_from_query_sets(query_sets, column_name, 'csv')
 
     return render_template('download.htm', form=category)    
@@ -228,7 +228,7 @@ def downloadsearch():
     #searchform = DownloadForm()
     #selectedmanager = searchform.category.data
     query_sets_all = Cars.query.all()
-    column_name = ['id', 'regonum', 'driver', 'state', 'manager', 'expirydate']
+    column_name = ['regonum', 'driver', 'state', 'manager', 'expirydate', 'email']
     return excel.make_response_from_query_sets(query_sets_all, column_name, 'csv')
 
 
@@ -288,7 +288,8 @@ def save_to_db():
             completed.append('Duplicated')
             
         else:
+            df_uploaded.to_sql(name='cars', con=engine, if_exists='append', index=False)
             completed.append('Validated')
-    df_uploaded['completed'] = completed
-
+            df_uploaded['completed'] = completed
+            
     return render_template('upload_results.htm', pd_table=df_uploaded.to_html())
