@@ -288,7 +288,7 @@ def save_to_db():
             completed.append('Duplicated')
             
         else:
-            completed.append('out')
+            completed.append('Validated')
     df_uploaded['completed'] = completed
 
     return render_template('upload_results.htm', pd_table=df_uploaded.to_html())
