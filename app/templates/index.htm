@@ -5,6 +5,16 @@
 
 <p></p>
 
+{% if current_user.is_anonymous %}
+<p>Hi, You Havn't Logged In, You Can View Cars!</p>
+{% else %}
+<h1>Hi, {{ current_user.username }}, how are you today!</h1>
+{% endif %}
+    {% for post in posts %}
+    <div><p>{{ post.author.username }} says: <b>{{ post.body }}</b></p></div>
+    {% endfor %}
+
+
 {% with messages = get_flashed_messages() %}
   {% if messages %}
     <ul class=flashes>

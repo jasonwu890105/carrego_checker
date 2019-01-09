@@ -9,6 +9,7 @@
         <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
         <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
         <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
         <title>Car Rego Checker</title>
       </head>
       <body style="background-color:rgba(150, 217, 238, 0.993);">
@@ -23,6 +24,11 @@
                             <a href="{{ url_for('.download') }}" class="w3-bar-item w3-button"> Download </a>
                             <a href="{{ url_for('.downloadsearch') }}" class="w3-bar-item w3-button"> Report </a>
                             <a href="{{ url_for('.file_upload') }}" class="w3-bar-item w3-button"> Upload </a>
+                            {% if current_user.is_anonymous %}
+                            <a href="{{ url_for('login') }}" class="w3-bar-item w3-button">Login</a>
+                            {% else %}
+                            <a href="{{ url_for('logout') }}" class="w3-bar-item w3-button">Logout</a>
+                            {% endif %}
                         </div>
                         {% block content %}  {% endblock %}
                     </div>

@@ -1,11 +1,16 @@
 from app import db
 from flask_wtf import Form, FlaskForm
-from wtforms import Form, StringField, SelectField, RadioField, DateField, IntegerField, ValidationError, validators
+from wtforms import Form, StringField, SelectField, RadioField, DateField, IntegerField, ValidationError, validators, PasswordField, BooleanField, SubmitField
 from wtforms_sqlalchemy.fields import QuerySelectField
-from wtforms.validators import InputRequired
+from wtforms.validators import InputRequired, DataRequired
 from .util.validator import Unique
 from app.models import Cars
 
+class LoginForm(FlaskForm):
+    username = StringField('Username', validators=[DataRequired()])
+    password = PasswordField('Password', validators=[DataRequired()])
+    remember_me = BooleanField('Remember Me')
+    submit = SubmitField('Sign In')
 
 class CarSearchForm(Form):
 

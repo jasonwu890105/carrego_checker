@@ -1,8 +1,8 @@
 """carss table
 
-Revision ID: 059677344d73
+Revision ID: 493f0f84d016
 Revises: 
-Create Date: 2018-12-17 18:01:55.761161
+Create Date: 2019-01-08 11:57:03.933552
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '059677344d73'
+revision = '493f0f84d016'
 down_revision = None
 branch_labels = None
 depends_on = None

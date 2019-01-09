@@ -10,7 +10,8 @@ from flask_rq2 import RQ
 from celery import Celery
 from celery.schedules import crontab
 import celeryconfig
-import flask_excel as excel 
+import flask_excel as excel
+from flask_login import LoginManager, current_user, login_user, logout_user, login_required, UserMixin
 
 
 app = Flask(__name__)
@@ -27,6 +28,9 @@ db = SQLAlchemy(app)
 mail = Mail(app)
 migrate = Migrate(app, db)
 app.secret_key = "flask rocks!"
+
+login = LoginManager(app)
+login.login_view = 'login'
 
 mail = Mail(app)
 excel.init_excel(app)

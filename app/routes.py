@@ -1,7 +1,8 @@
 from app import app, db
+from flask_login import LoginManager, current_user, login_user, logout_user, login_required, UserMixin
 from flask import render_template, request, redirect, flash, jsonify, session, url_for, send_file
-from app.forms import CarSearchForm, CarsForm, DownloadForm, CarsForm_Update
-from app.models import Cars
+from app.forms import CarSearchForm, CarsForm, DownloadForm, CarsForm_Update, LoginForm
+from app.models import User, Cars
 from app.table import Results
 import csv
 import flask_excel as excel
@@ -11,6 +12,26 @@ from pandas.io.json import json_normalize
 from io import TextIOWrapper 
 from sqlalchemy import create_engine
 import datetime, datedelta
+
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if current_user.is_authenticated:
+        return redirect(url_for('index'))
+    form = LoginForm()
+    if form.validate_on_submit():
+        user = User.query.filter_by(username=form.username.data).first()
+        if user is None or not user.check_password(form.password.data):
+            flash('Invalid username or password')
+            return redirect(url_for('login'))
+        login_user(user, remember=form.remember_me.data)
+        return redirect(url_for('index'))
+    return render_template('login.html', title='Sign In', form=form)
+
+@app.route('/logout')
+def logout():
+    logout_user()
+    return redirect(url_for('index'))
 
 @app.route('/', methods=['GET', 'POST'])
 #@app.route('/index', methods=['GET', 'POST'])
@@ -50,36 +71,10 @@ def search_results(search):
         table.border = True
         return render_template('results.htm', table=table)
 
-'''
-        def export_csv():
-            #csvfile = cStringIO.StringIO()
-            csvfile = StringIO.StringIO()
-            headers = [
-                'RegoPlate',
-                'Driver',
-                'State',
-                'Manager',
-                'ExpiryDate',
-                'Email'
-            ]
-
-            rows = []
-            for result in results:
-                rows.append(
-                    {
-                        'RegoPlate' : result.regonum,
-                        'Driver': result.driver,
-                        'State' : result.state,
-                        'Manager': result.manager,
-                        'ExpiryDate': result.expirydate,
-                        'Email' : result.email
-                    }
-                )
-
-'''
 
 
 @app.route('/new_cars', methods=['GET', 'POST'])
+@login_required
 def new_cars():
     form = CarsForm(request.form)
 
@@ -130,6 +125,7 @@ def update_changes(car, form):
     db.session.commit()
 
 @app.route('/item/<int:id>', methods=['GET', 'POST'])
+@login_required
 def edit(id):
     qry = Cars.query.filter(Cars.id==id)
     car = qry.first()
@@ -148,6 +144,7 @@ def edit(id):
         return 'Error loading #{id}'.format(id=id)
 
 @app.route('/delete/<int:id>', methods=['GET', 'POST'])
+@login_required
 def delete(id):
     qry = Cars.query.filter(Cars.id==id)
     car = qry.first()
@@ -167,6 +164,7 @@ def delete(id):
         return 'Error deleting #{id}'.format(id=id)
     
 @app.route('/renew/<int:id>', methods=['GET', 'POST'])
+@login_required
 def renew(id):
     qry = Cars.query.filter(Cars.id==id)
     car = qry.first()
@@ -233,6 +231,7 @@ def downloadsearch():
 
 
 @app.route('/upload', methods=['GET', 'POST'])
+@login_required
 def file_upload():
     global filename
     if request.method == 'POST':
@@ -285,11 +284,15 @@ def save_to_db():
     for row in df_uploaded['regonum']:
 
         if row in df2['regonum'].tolist():
-            completed.append('Duplicated')
+            completed.append('Duplicated and Dropped')
             
         else:
-            completed.append('Validated')
+            
+            df_dropped = df_uploaded[~df_uploaded.regonum.isin(df2['regonum'].tolist())]
+            df_dropped.to_sql(name='cars', con=engine, if_exists='append', index=False)
+            completed.append('Validated and Uploaded')
     
     df_uploaded['completed'] = completed
 
     return render_template('upload_results.htm', pd_table=df_uploaded.to_html())
+
