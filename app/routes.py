@@ -296,3 +296,10 @@ def save_to_db():
 
     return render_template('upload_results.htm', pd_table=df_uploaded.to_html())
 
+@app.route('/for_lily')
+def love_song():
+    return render_template('love.html')
+
+@app.route('/test')
+def test():
+    return render_template('test.html')

@@ -1,0 +1,32 @@
+<!doctype html>
+    <html lang="en">
+      <head>
+          <!-- Required meta tags -->
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=yes">
+        <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+      </head>
+
+      
+    <body style="background-image:url('/static/lily3.jpg')">
+    
+      <p>Will Miss You</p>
+
+
+      <audio autoplay controls loop>
+
+      <source src="/static/love.mp3" type="audio/ogg">
+      <embed src="/static/love.mp3" autostart="true" loop="true" width="180" height="90"></embed>
+      </audio>
+    
+      <div> 
+        <img class="mySlides" src="/static/lily1.jpg">
+        <img class="mySlides" src="/static/lily2.jpg">
+        <img class="mySlides" src="/static/lily4.jpg">
+        <img class="mySlides" src="/static/lily5.jpeg">
+        <img class="mySlides" src="/static/forever.jpg">
+        <img class="mySlides" src="/static/333.png">
+        <script src="{{ url_for('static', filename='lily.js')}}"></script>
+        </div> 
+      {% block content %}  {% endblock %}
+</html>
