@@ -24,11 +24,14 @@
                             <a href="{{ url_for('.download') }}" class="w3-bar-item w3-button"> Download </a>
                             <a href="{{ url_for('.downloadsearch') }}" class="w3-bar-item w3-button"> Report </a>
                             <a href="{{ url_for('.file_upload') }}" class="w3-bar-item w3-button"> Upload </a>
+                            <a href="{{ url_for('.show_alerts') }}" class="w3-bar-item w3-button"> Alert </a>
                             {% if current_user.is_anonymous %}
                             <a href="{{ url_for('login') }}" class="w3-bar-item w3-button">Login</a>
                             {% else %}
                             <a href="{{ url_for('logout') }}" class="w3-bar-item w3-button">Logout</a>
                             {% endif %}
+
+                            <a href="{{ url_for('.love_song') }}" class="w3-bar-item w3-button"> Our Story </a>
                         </div>
                         {% block content %}  {% endblock %}
                     </div>

@@ -8,7 +8,15 @@
 {% from "_formhelpers.htm" import render_field %}
 <form method=post>
     <dl>
-        {{ render_field(form.regonum)|lower }}
+        {{ render_field(form.regonum) }}
+        {{ render_field(form.make, placeholder='Please input car brand') }}
+        {{ render_field(form.model, placeholder='Please input car model') }}
+        {{ render_field(form.engine_size, placeholder='Please input engine engine size') }}
+        {{ render_field(form.year_manufactured, placeholder='Please input car manufacture year') }}
+        {{ render_field(form.value_insured, placeholder='Please input the value of the car insured') }}
+        {{ render_field(form.owenership, placeholder='Please input car owenership, eg owned, Toyota Fleet Mgt...') }}
+        {{ render_field(form.motorcharge_card) }}
+        {{ render_field(form.house_location, placeholder='Please input the exact office location') }}
         {{ render_field(form.driver) }}
         {{ render_field(form.state) }}
         {{ render_field(form.manager) }}

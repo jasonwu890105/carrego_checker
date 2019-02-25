@@ -45,10 +45,11 @@
   display: block;
   margin-left: auto;
   margin-right: auto;
-  width: 30%;
+  width: 35%;
   background-color: red;
+  background-size: cover;
   //width: 30px;
-  transform: rotate(-45deg);
-  border-radius: 60%;
+  //transform: rotate(10deg);
+  border-radius:50% 50% 50% 50%;
   
   }

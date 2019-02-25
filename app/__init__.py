@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, current_app
 from config import Config, EmailConfig, CeleryConfig
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
@@ -11,8 +11,9 @@ from celery import Celery
 from celery.schedules import crontab
 import celeryconfig
 import flask_excel as excel
-from flask_login import LoginManager, current_user, login_user, logout_user, login_required, UserMixin
-
+from flask_login import LoginManager, current_user, login_user, logout_user, UserMixin
+#from flask_user import roles_required, UserManager, UserMixin
+from functools import wraps
 
 app = Flask(__name__)
 app.debug = True
@@ -31,6 +32,22 @@ app.secret_key = "flask rocks!"
 
 login = LoginManager(app)
 login.login_view = 'login'
+#user_manager = UserManager(app, db, User)
+
+def login_required(role="ANY"):
+    def wrapper(fn):
+        @wraps(fn)
+        def decorated_view(*args, **kwargs):
+
+            if not current_user.is_authenticated():
+               return current_app.login_manager.unauthorized()
+            urole = current_app.login_manager.reload_user().get_urole()
+            if ( (urole != role) and (role != "ANY")):
+                return current_app.login_manager.unauthorized()      
+            return fn(*args, **kwargs)
+        return decorated_view
+    return wrapper
+
 
 mail = Mail(app)
 excel.init_excel(app)

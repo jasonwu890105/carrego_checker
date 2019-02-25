@@ -32,13 +32,21 @@ class CarsForm(Form):
                ('NT', 'NT'),
                ('VIC', 'VIC')]
 
-    regonum = StringField('Rego', validators=[Unique(Cars, Cars.regonum, message='This Car Has Already Registered')])
+    regonum = StringField('Rego', validators=[InputRequired(message='Please Enter a valid rego number'),Unique(Cars, Cars.regonum, message='This Car Has Already Registered')])
+    make = StringField('Make')
+    model = StringField('Model')
+    engine_size = StringField('Engine Size')
+    year_manufactured = StringField('Year Manuafactured')
+    value_insured = StringField('Insured Value')
+    owenership = StringField('Owndership')
+    motorcharge_card = StringField('MotorCharge Card #')
+    house_location = StringField('Housed Location')
     driver = StringField('Driver', validators=[InputRequired(message="Please Enter a Driver.")])
-    state = SelectField('State', choices=state_select)
+    state = SelectField('State', choices=state_select, validators=[InputRequired()])
     manager = StringField('Manager', validators=[InputRequired(message="Please Enter Manager's Name.")])
     expirydate = DateField('ExpiryDate', format='%d/%m/%Y')
     email = StringField('Email', validators=[InputRequired(message="Please Enter a Email Address.")])
-    #rego_daysleft = IntegerField('Exprting In')
+    
 
 class CarsForm_Update(Form):
     state_select = [('NSW', "NSW"),
@@ -50,6 +58,14 @@ class CarsForm_Update(Form):
                ('VIC', 'VIC')]
 
     regonum = StringField('Rego')
+    make = StringField('Make')
+    model = StringField('Model')
+    engine_size = StringField('Engine Size')
+    year_manufactured = StringField('Year Manuafactured')
+    value_insured = StringField('Insured Value')
+    owenership = StringField('Owndership')
+    motorcharge_card = StringField('MotorCharge Card #')
+    house_location = StringField('Housed Location')
     driver = StringField('Driver', validators=[InputRequired(message="Please Enter a Driver.")])
     state = SelectField('State', choices=state_select)
     manager = StringField('Manager', validators=[InputRequired(message="Please Enter Manager's Name.")])
@@ -57,10 +73,6 @@ class CarsForm_Update(Form):
     email = StringField('Email', validators=[InputRequired(message="Please Enter a Email Address.")])
 
 
-'''
-def choice_query():
-    return db.session.query(Cars.manager).all()
-'''
 
 def choice_query():
 

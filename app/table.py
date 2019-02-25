@@ -9,6 +9,7 @@ class Results(Table):
     expirydate = Col('Expirydate')
     email = Col('Email')
     rego_daysleft = Col('Exprting In')
+    email_sent = Col('Email Record')
     edit = ButtonCol('Edit', 'edit', url_kwargs=dict(id='id'))
     delete = ButtonCol('Delete', 'delete', url_kwargs=dict(id='id'))
     renew = ButtonCol('Renew_One_Year', 'renew', url_kwargs=dict(id='id'))

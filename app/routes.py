@@ -1,6 +1,7 @@
 from app import app, db
-from flask_login import LoginManager, current_user, login_user, logout_user, login_required, UserMixin
-from flask import render_template, request, redirect, flash, jsonify, session, url_for, send_file
+from flask_login import LoginManager, current_user, login_user, logout_user, UserMixin, login_required
+from flask_user import roles_required, UserManager, UserMixin
+from flask import render_template, request, redirect, flash, jsonify, session, url_for, send_file, g
 from app.forms import CarSearchForm, CarsForm, DownloadForm, CarsForm_Update, LoginForm
 from app.models import User, Cars
 from app.table import Results
@@ -12,7 +13,28 @@ from pandas.io.json import json_normalize
 from io import TextIOWrapper 
 from sqlalchemy import create_engine
 import datetime, datedelta
+from functools import wraps
+from flask import current_app
+from functools import wraps
+#from app.decorator import login_required
 
+def required_roles(*roles):
+   def wrapper(f):
+      @wraps(f)
+      def wrapped(*args, **kwargs):
+         if get_current_user_role() not in roles:
+            flash('Authentication error, please check your details and try again','error')
+            return redirect(url_for('index'))
+         return f(*args, **kwargs)
+      return wrapped
+   return wrapper
+ 
+def get_current_user_role():
+   return g.user.role
+
+@app.before_request
+def before_request():
+    g.user = current_user
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -25,7 +47,7 @@ def login():
             flash('Invalid username or password')
             return redirect(url_for('login'))
         login_user(user, remember=form.remember_me.data)
-        return redirect(url_for('index'))
+        return redirect(url_for('index', login_username=current_user.username))
     return render_template('login.html', title='Sign In', form=form)
 
 @app.route('/logout')
@@ -194,20 +216,6 @@ def download():
 
     return render_template('download.htm', form=category)
 
-    #query_sets = []
-    #download_form = DownloadForm(request.form)
-    #selectedmanager = download_form.data['category']
-
-    #if selectedmanager:
-    #if download_form.validate():             #validate_on_submit():
-        #selectedmanager = download_form.data['category']
-    #query_sets = Cars.query.filter(Cars.manager==selectedmanager).all()
-    #print(download_form.data)
-        #column_name = ['id', 'regonum', 'driver', 'state', 'manager', 'expirydate']
-        #return excel.make_response_from_query_sets(query_sets, column_name, 'csv')
-
-
-    #return render_template('download.htm', form=download_form)
 @app.route('/download_results')
 def download_results(category):
 
@@ -262,16 +270,6 @@ def file_upload():
 def download_csv():
     return send_file(filename, attachment_filename='yourfile.csv', as_attachment=True)
 
-'''
-@app.route('/Save_to_DB', methods=['GET', 'POST'])
-def save_to_db():
-    engine = create_engine('postgresql://postgres:wd123WD123@localhost/carrego')
-    df_uploaded = pd.read_csv(filename, index_col=False)
-    df2 = pd.read_sql_table(table_name='cars', con=engine)
-    print(df2)
-    return df_uploaded.to_sql(name='cars', con=engine, if_exists='append', index=False)
-'''
-
 
 @app.route('/Save_to_DB', methods=['GET', 'POST'])
 def save_to_db():
@@ -296,10 +294,22 @@ def save_to_db():
 
     return render_template('upload_results.htm', pd_table=df_uploaded.to_html())
 
+@app.route('/test')
+@required_roles('Lily')
+def test():
+    return render_template('test.html')
+
+
 @app.route('/for_lily')
+#@required_roles('Lily')
+@login_required
 def love_song():
     return render_template('love.html')
 
-@app.route('/test')
-def test():
-    return render_template('test.html')
+@app.route('/alert')
+def show_alerts():
+    qry = Cars.query.filter(Cars.rego_daysleft <= 30)
+    results = qry.all()
+    table = Results(results)
+    table.border = True
+    return render_template('alert.html', table=table)

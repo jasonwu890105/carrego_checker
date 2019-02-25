@@ -11,7 +11,7 @@ class EmailConfig(object):
     #MAIL_USE_SSL = True
     MAIL_USERNAME = 't5721793admin@tpgtelecom.com.au'  # enter your email here
     MAIL_DEFAULT_SENDER = 't5721793@tpgtelecom.com.au' # enter your email here
-    MAIL_PASSWORD = 'Summer22' # enter your password here
+    MAIL_PASSWORD = 'Summer23' # enter your password here
 
 class CeleryConfig(object):
     BROKER_URL = 'redis://localhost:6379/0'

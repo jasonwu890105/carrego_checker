@@ -28,6 +28,6 @@ CELERYBEAT_SCHEDULE = {
   
     'send-emailnotify': {
         'task': 'app.tasks.email_notification',
-        'schedule': crontab(hour=15, minute=30),
+        'schedule': crontab(hour=10, minute=20),
     },
 }

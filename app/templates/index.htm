@@ -3,7 +3,12 @@
 
 <h1>Car Rego Checker</h1>
 
-<p></p>
+<p>
+
+{% if login_username == 'lily' %}
+<a href="{{ url_for('.love_song') }}"> Our Story </a>
+{% endif %}
+</p>
 
 {% if current_user.is_anonymous %}
 <p>Hi, You Havn't Logged In, You Can View Cars!</p>
